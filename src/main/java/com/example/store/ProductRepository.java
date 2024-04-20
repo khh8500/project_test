@@ -14,6 +14,14 @@ public class ProductRepository {
     private final EntityManager em;
 
     @Transactional
+    public void deleteById(Integer id){
+        Query query = em.createNativeQuery("delete from product_tb where id=?", Product.class);
+        query.setParameter(1, id);
+
+        query.executeUpdate();
+    }
+
+    @Transactional
     public void updateById(ProductRequest.UpdateDTO reqDTO){
         String name = reqDTO.getName();
         Integer price = reqDTO.getPrice();

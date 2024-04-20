@@ -11,6 +11,10 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
+    public void deleteById(Integer id){
+        productRepository.deleteById(id);
+    }
+
     public void updateById(ProductRequest.UpdateDTO reqDTO){
         productRepository.updateById(reqDTO);
     }
