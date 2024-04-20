@@ -60,7 +60,10 @@ public class ProductController {
     }
 
     @GetMapping("/")
-    public String index() {
+    public String index(HttpServletRequest request) {
+        List<Product> productList = productService.findAll();
+        request.setAttribute("productList", productList);
+
         return "/index";
     }
 
