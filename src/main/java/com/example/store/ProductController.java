@@ -17,16 +17,16 @@ public class ProductController {
 
     @GetMapping("/product")
     public String list(HttpServletRequest request){
-        List<Product> productList = productService.findAll();
-        request.setAttribute("productList", productList);
+        List<ProductResponse.MainDTO> respDTO = productService.findAll();
+        request.setAttribute("productList", respDTO);
 
         return "/product/list";
     }
 
     @GetMapping("/product/{id}")
     public String detail(@PathVariable Integer id, HttpServletRequest request) {
-        Product product = productService.findById(id);
-        request.setAttribute("product", product);
+        ProductResponse.DetailDTO respDTO = productService.findById(id);
+        request.setAttribute("product", respDTO);
         return "product/detail";
     }
 
@@ -49,8 +49,8 @@ public class ProductController {
 
     @GetMapping("/product/{id}/update-form")
     public String updateForm(@PathVariable Integer id, HttpServletRequest request){
-        Product product = productService.findById(id);
-        request.setAttribute("product", product);
+        ProductResponse.DetailDTO respDTO = productService.findById(id);
+        request.setAttribute("product", respDTO);
         return "product/update-form";
     }
 
@@ -62,8 +62,8 @@ public class ProductController {
 
     @GetMapping("/")
     public String index(HttpServletRequest request) {
-        List<Product> productList = productService.findAll();
-        request.setAttribute("productList", productList);
+        List<ProductResponse.MainDTO> respDTO = productService.findAll();
+        request.setAttribute("productList", respDTO);
 
         return "/index";
     }
