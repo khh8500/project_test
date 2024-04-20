@@ -15,6 +15,13 @@ public class ProductService {
     private final EntityManager em;
 
     @Transactional
+    public boolean isProductNameExists(String name) {
+        Query query = em.createNativeQuery("select count(*) from product_tb where name = ?");
+        query.setParameter(1, name);
+        return ((Number) query.getSingleResult()).intValue() > 0;
+    }
+
+    @Transactional
     public void deleteById(Integer id){
         Query query = em.createNativeQuery("delete from product_tb where id=?", Product.class);
         query.setParameter(1, id);

@@ -20,9 +20,49 @@
 
             <!-- 상품 정보 입력 섹션 -->
             <div class="col-lg-6 px-xl-10">
-                <div class="mb-3 mt-3">
-                    상 품 명 : <input name="name" type="text" class="form-control" placeholder="상품명을 입력하세요">
-                </div>
+                <form action="/product/save" method="post" onsubmit="return valid()">
+                    <div class="mb-3 mt-3">
+                        상 품 명 : <input name="name" type="text" class="form-control" placeholder="상품명을 입력하세요">
+                        <button type="button" onclick="nameSameCheck()" class="btn btn-warning">상품명 중복체크</button>
+                    </div>
+                </form>
+                <script>
+                    let isSameCheck = false;
+
+                    function valid() {
+                        if (isSameCheck == false) {
+                            alert("상품명 중복을 확인해주세요.");
+                        }
+                        return isSameCheck;
+                    }
+
+                    function nameSameCheck() {
+                        // 1. 상품명 블루베리를 $("#name").val()로 가져와서 변수 name에 담아요.
+                        let name = $("#name").val();
+                        // 당연히 상품명이 담긴 input tage에 id가 productName이 잡혀있어야 가져올수 있어요.
+
+                        // 2. ajax 요청을 합니다.
+                        $.ajax({
+                            url: "/api/name-same-check?name=" + name,
+                            type: "get"
+                        }).done((res) => {
+                            console.log(res);
+                            // 요청이 성공하면 해당 부분이 실행됩니다.
+                            if (res.body == true) {
+                                // 요청이 성공하고, 상품명이 중복되었다면, isSameCheck 변수값을 false로 세팅
+                                isSameCheck = false;
+                                alert("상품명이 중복되었습니다. 다른 상품명을 입력해주세요");
+                            } else {
+                                // 상품명이 중복되지 않았다면 isSameCheck 변수값을 true로 세팅
+                                isSameCheck = true;
+                                alert("중복 확인 완료되였습니다");
+                            }
+                        }).fail((res) => {
+                            // 요청이 실패하면 해당 부분이 실행되요. 실패란 http 상태코드가 200이 아닐때입니다.
+                            alert(res.responseJSON.msg);
+                        });
+                    }
+                </script>
                 <div class="mb-3 mt-3">
                     상품가격 : <input name="price" type="number" class="form-control" placeholder="상품가격을 입력하세요">
                 </div>

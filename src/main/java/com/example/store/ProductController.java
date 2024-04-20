@@ -1,11 +1,10 @@
 package com.example.store;
 
+import com.example._core.utils.ApiUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -15,8 +14,19 @@ public class ProductController {
 
     private final ProductService productService;
 
+    @GetMapping("/api/name-same-check")
+    public @ResponseBody ApiUtil<?> productSameCheck(@RequestParam String name) {
+        if (name == null) { // 등록 해도 된다.
+            return new ApiUtil<>(true);
+        } else { // 등록 하면 안된다.
+            boolean isExists = productService.isProductNameExists(name);
+            return new ApiUtil<>(!isExists);
+        }
+
+    }
+
     @GetMapping("/product")
-    public String list(HttpServletRequest request){
+    public String list(HttpServletRequest request) {
         List<ProductResponse.MainDTO> respDTO = productService.findAll();
         request.setAttribute("productList", respDTO);
 
@@ -42,20 +52,20 @@ public class ProductController {
     }
 
     @PostMapping("/product/{id}/update")
-    public String update(@PathVariable Integer id, ProductRequest.UpdateDTO reqDTO){
+    public String update(@PathVariable Integer id, ProductRequest.UpdateDTO reqDTO) {
         productService.updateById(reqDTO);
-        return "redirect:/product/"+id;
+        return "redirect:/product/" + id;
     }
 
     @GetMapping("/product/{id}/update-form")
-    public String updateForm(@PathVariable Integer id, HttpServletRequest request){
+    public String updateForm(@PathVariable Integer id, HttpServletRequest request) {
         ProductResponse.DetailDTO respDTO = productService.findById(id);
         request.setAttribute("product", respDTO);
         return "product/update-form";
     }
 
     @PostMapping("product/{id}/delete")
-    public String delete(@PathVariable Integer id){
+    public String delete(@PathVariable Integer id) {
         productService.deleteById(id);
         return "redirect:/";
     }
