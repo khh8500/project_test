@@ -11,6 +11,10 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
+    public void save(ProductRequest.SaveDTO reqDTO){
+        productRepository.save(reqDTO);
+    }
+
     public Product findById(Integer id){
         return productRepository.findById(id);
     }
