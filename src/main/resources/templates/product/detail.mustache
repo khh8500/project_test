@@ -13,6 +13,25 @@
             <div class="mb-3 mt-3">
                 상 품 명 : <input name="name" value="{{product.name}}" type="text" class="form-control" disabled>
             </div>
+            <script>
+                let isSameCheck = false;
+                fucntion nameSameCheck() {
+                    // 1. 상품명 블루베리를 $("#productName").val()로 가져와서 변수 productName에 담아요.
+                    // 당연히 상품명이 담긴 input tage에 id가 productName이 잡혀있어야 가져올수 있어요.
+
+                    // 2. ajax 요청을 합니다.
+                    $.ajax({
+                        // 여기에서 요청을 하면 되요.
+                    }).done((res)=>{
+                        // 요청이 성공하면 해당 부분이 실행됩니다.
+                        // 요청이 성공하고, 상품명이 중복되었다면, isSameCheck 변수값을 false로 세팅
+                        // 상품명이 중복되지 않았다면 isSameCheck 변수값을 true로 세팅
+                    }).fail((err)=>{
+                        // 요청이 실패하면 해당 부분이 실행되요. 실패란 http 상태코드가 200이 아닐때입니다.
+                    });
+                }
+            </script>
+
             <div class="mb-3 mt-3">
                 상품가격 : <input name="price" value="{{product.price}}" type="text" class="form-control" disabled>
             </div>
