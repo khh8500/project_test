@@ -14,6 +14,21 @@ public class ProductRepository {
     private final EntityManager em;
 
     @Transactional
+    public void updateById(ProductRequest.UpdateDTO reqDTO){
+        String name = reqDTO.getName();
+        Integer price = reqDTO.getPrice();
+        Integer qty = reqDTO.getQty();
+        Integer id = reqDTO.getId();
+
+        Query query = em.createNativeQuery("update product_tb set name=?, price=?, qty=? where id=?", Product.class);
+        query.setParameter(1, name);
+        query.setParameter(2, price);
+        query.setParameter(3, qty);
+        query.setParameter(4, id);
+        query.executeUpdate();
+    }
+
+    @Transactional
     public void save(ProductRequest.SaveDTO reqDTO){
         String name = reqDTO.getName();
         Integer price = reqDTO.getPrice();

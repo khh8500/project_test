@@ -11,6 +11,10 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
+    public void updateById(ProductRequest.UpdateDTO reqDTO){
+        productRepository.updateById(reqDTO);
+    }
+
     public void save(ProductRequest.SaveDTO reqDTO){
         productRepository.save(reqDTO);
     }
