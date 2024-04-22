@@ -2,7 +2,9 @@ package com.example.product;
 
 import com.example._core.utils.ApiUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,14 +16,26 @@ public class ProductController {
 
     private final ProductService productService;
 
-    // 상품명 중복체크
-    @GetMapping("/api/name-same-check")
-    public @ResponseBody ApiUtil<?> productSameCheck(String name) {
-        productService.isProductNameExists(name);
-        if (name == null) { // 등록 해도 된다.
-            return new ApiUtil<>(true);
-        } else { // 등록 하면 안된다.
-            return new ApiUtil<>(false);
+    //상품명 실시간 중복체크 (업데이트용)
+    @GetMapping("/product/name-check/update")
+    public @ResponseBody ResponseEntity<?> nameSameCheckUpdate(String name, Integer id) {
+        Product product = productService.findByNameUpdate(name, id);
+        if (product == null) {
+            return ResponseEntity.ok(new ApiUtil<>(true)); //상품 등록 가능
+        } else {
+            return ResponseEntity.ok(new ApiUtil<>(false)); //상품 등록 불가
+        }
+    }
+
+    // 상품명 실시간 중복체크
+    @GetMapping("/product/name-check")
+    public @ResponseBody ResponseEntity<?> nameSameCheck(String name, HttpServletResponse response) {
+        Product product = productService.findByName(name);
+        if (product == null) {
+            return ResponseEntity.ok(new ApiUtil<>(true)); //상품 등록 가능
+        } else {
+            //response.setStatus(400);
+            return ResponseEntity.ok(new ApiUtil<>(false)); //상품 등록 불가
         }
     }
 

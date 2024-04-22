@@ -21,42 +21,103 @@
             <!-- 상품 정보 입력 섹션 -->
             <div class="col-lg-6 px-xl-10">
                 <div class="mb-3 mt-3">
-                    상 품 명 : <input name="name" type="text" class="form-control" placeholder="상품명을 입력하세요">
-                    <button type="button" onclick="nameSameCheck()" class="btn btn-warning">상품명 중복체크</button>
+                    상 품 명 : <input id="name" name="name" type="text" class="form-control" placeholder="상품명을 입력하세요">
+                    <input type="hidden" name="productId" value="{{product.id}}">
+                    <div class="alert alert-danger" id="nameCheck"></div>
+<!--                    <button type="button" onclick="nameSameCheck()" class="btn btn-warning">상품명 중복체크</button>-->
                 </div>
                 <script>
-                    let isSameCheck = false;
+                    // 실시간 상품명 중복체크
+                    $("#name").keyup(function (){
+                        //this = 지금 현재 클릭한 것, val = 값 가져옴
+                        var name = $(this).val();
+                        var productId = $("input[name='productId']").val(); // 상품 ID 가져오기
+                        // alert(name);
 
-                    function
-                    nameSameCheck() {
-                        // 1. 상품명 블루베리를 $("#name").val()로 가져와서 변수 productName에 담아요.
-                        let name = $("#name").val();
-                        // 당연히 상품명이 담긴 input tage에 id가 productName이 잡혀있어야 가져올수 있어요.
+                        //서버로 가서 id 중복체크 -> url과 입력 데이터는 바뀌면 안됨 -> Ajax
+                        //url -> /product/name-check
+                        //서버에서 전달되는 데이터를 result로 받음 -> 가져온 데이터가 null이면 사용 가능, 있으면 중복
+                        var encodedName = encodeURIComponent(name); //이게 없으면 띄어쓰기 인식 안됨
 
-                        // 2. ajax 요청을 합니다.
                         $.ajax({
-                            url: '/api/name-same-check?=name' + name,
-                            method: 'GET'
-                        }).done((res) => {
-                            // 요청이 성공하면 해당 부분이 실행됩니다.
-                            if (res == true) {
-                                // 요청이 성공하고, 상품명이 중복되었다면, isSameCheck 변수값을 false로 세팅
-                                isSameCheck = false;
+                            method: "GET",
+                            url: "/product/name-check/update?name=" + encodedName + "&id=" + productId
+
+                        }).done((res)=>{
+                            console.log(res);
+                            if (res.body === true) {    //res의 body값이랑 비교해야함!!
+                                $("#nameCheck").removeClass("alert-danger");
+                                $("#nameCheck").addClass("alert-success");
+                                $("#nameCheck").text("사용 가능한 상품명 입니다.");
                             } else {
-                                // 상품명이 중복되지 않았다면 isSameCheck 변수값을 true로 세팅
-                                isSameCheck = true;
+                                $("#nameCheck").removeClass("alert-success");
+                                $("#nameCheck").addClass("alert-danger");
+                                $("#nameCheck").text("중복된 상품명 입니다.");
                             }
-                        }).fail((res) => {
-                            // 요청이 실패하면 해당 부분이 실행되요. 실패란 http 상태코드가 200이 아닐때입니다.
-                            alert(res.responseJSON.msg);
+                        }).fail((res)=>{
+                            alert("통신 오류");
                         });
+
+                    });
+
+                    $(document).ready(function() {
+                        // 가격 표시
+                        var price = $('input[name="price"]').val();
+                        $('input[name="price"]').val(priceToString(parseInt(price)));
+
+                        // 수량 표시
+                        var qty = $('input[name="qty"]').val();
+                        $('input[name="qty"]').val(qtyToString(parseInt(qty)));
+                    });
+
+                    function priceToString(price) {
+                        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
                     }
+
+                    function qtyToString(qty) {
+                        return qty.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                    }
+
+                    $(document).ready(function() {
+                        // 가격 입력 필드에 대한 이벤트 리스너 추가
+                        $('#price').on('input', function() {
+                            // 입력된 값에서 숫자만 추출
+                            var number = $(this).val().replace(/[^0-9]/g, '');
+                            // 천 단위 구분자 적용
+                            var changeNum = number.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                            // 변환된 값으로 입력 필드 업데이트
+                            $(this).val(changeNum);
+
+                        });
+
+                        $('#qty').on('input', function() {
+                            // 입력된 값에서 숫자만 추출
+                            var number = $(this).val().replace(/[^0-9]/g, '');
+                            // 천 단위 구분자 적용
+                            var changeNum = number.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                            // 변환된 값으로 입력 필드 업데이트
+                            $(this).val(changeNum);
+                        });
+
+
+                        // 폼 제출 전 실행될 이벤트
+                        $('form').on('submit', function() {
+                            // 가격과 수량 입력 필드에서 천 단위 구분자 제거
+                            var price = $('#price').val().replace(/,/g, '');
+                            $('#price').val(price);
+                            // 수량 필드에 대해서도 같은 처리를 수행
+                            var qty = $('input[name="qty"]').val().replace(/,/g, '');
+                            $('input[name="qty"]').val(qty);
+                        });
+                    });
+
+
                 </script>
                 <div class="mb-3 mt-3">
-                    상품가격 : <input name="price" type="number" class="form-control" placeholder="상품가격을 입력하세요">
+                    상품가격 : <input id="price" name="price" type="text" class="form-control" placeholder="상품가격을 입력하세요">
                 </div>
                 <div class="mb-3 mt-3">
-                    상품수량 : <input name="qty" type="number" class="form-control" placeholder="상품수량을 입력하세요">
+                    상품수량 : <input id="qty" name="qty" type="text" class="form-control" placeholder="상품수량을 입력하세요">
                 </div>
                 <div class="d-flex justify-content-center">
                     <button type="submit" class="btn btn-primary mt-3">상품수정완료</button>

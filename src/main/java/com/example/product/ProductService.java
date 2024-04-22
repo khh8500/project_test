@@ -14,9 +14,16 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-    @Transactional
-    public boolean isProductNameExists(String name) {
-       return productRepository.isProductNameExists(name);
+    //상품명 실시간 중복체크(업데이트)
+    public Product findByNameUpdate(String name, Integer id) {
+        Product product = productRepository.findByNameUpdate(name, id);
+        return product;
+    }
+
+    //상품명 실시간 중복체크
+    public Product findByName(String name) {
+        Product product = productRepository.findByName(name);
+        return product;
     }
 
     @Transactional

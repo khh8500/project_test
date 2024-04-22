@@ -15,15 +15,38 @@ public class ProductRepository {
 
     private final EntityManager em;
 
-    //상품명 중복체크
-    public boolean isProductNameExists(String name) {
-        Query query = em.createNativeQuery("SELECT 1 FROM product_tb WHERE name = ?");
-        query.setParameter(1, name);
+    //상품명 실시간 중복체크
+    //TODO: 레파지토리에서 try-catch를 안하고 싶은데... 어떻게 해야하지?
+    public Product findByNameUpdate(String name, Integer id) {
         try {
-            query.getSingleResult();
-            return true; // 결과가 존재하면 true 반환
-        } catch (NoResultException ex) {
-            return false; // 결과가 없으면 false 반환
+            String q = """
+                    select * from product_tb where name = ? and id != ?
+                    """;
+            Query query = em.createNativeQuery(q, Product.class);
+            query.setParameter(1, name);
+            query.setParameter(2, id);
+            Product product = (Product) query.getSingleResult();
+            return product;
+
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    //상품명 실시간 중복체크
+    //TODO: 레파지토리에서 try-catch를 안하고 싶은데... 어떻게 해야하지?
+    public Product findByName(String name) {
+        try {
+            String q = """
+                    select * from product_tb where name = ?
+                    """;
+            Query query = em.createNativeQuery(q, Product.class);
+            query.setParameter(1, name);
+            Product product = (Product) query.getSingleResult();
+            return product;
+
+        } catch (NoResultException e) {
+            return null;
         }
     }
 
