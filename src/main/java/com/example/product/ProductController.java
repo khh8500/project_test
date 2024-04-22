@@ -14,15 +14,15 @@ public class ProductController {
 
     private final ProductService productService;
 
+    // 상품명 중복체크
     @GetMapping("/api/name-same-check")
-    public @ResponseBody ApiUtil<?> productSameCheck(@RequestParam String name) {
+    public @ResponseBody ApiUtil<?> productSameCheck(String name) {
+        productService.isProductNameExists(name);
         if (name == null) { // 등록 해도 된다.
             return new ApiUtil<>(true);
         } else { // 등록 하면 안된다.
-            boolean isExists = productService.isProductNameExists(name);
-            return new ApiUtil<>(!isExists);
+            return new ApiUtil<>(false);
         }
-
     }
 
     @GetMapping("/product")

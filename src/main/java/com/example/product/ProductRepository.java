@@ -1,6 +1,7 @@
 package com.example.product;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -14,10 +15,16 @@ public class ProductRepository {
 
     private final EntityManager em;
 
+    //상품명 중복체크
     public boolean isProductNameExists(String name) {
-        Query query = em.createNativeQuery("select count(*) from product_tb where name = ?");
+        Query query = em.createNativeQuery("SELECT 1 FROM product_tb WHERE name = ?");
         query.setParameter(1, name);
-        return ((Number) query.getSingleResult()).intValue() > 0;
+        try {
+            query.getSingleResult();
+            return true; // 결과가 존재하면 true 반환
+        } catch (NoResultException ex) {
+            return false; // 결과가 없으면 false 반환
+        }
     }
 
     public void deleteById(Integer id){
