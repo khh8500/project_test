@@ -1,27 +1,25 @@
-package com.example.store;
+package com.example.product;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @RequiredArgsConstructor
-@Service
-public class ProductService {
+@Repository
+public class ProductRepository {
 
     private final EntityManager em;
 
-    @Transactional
     public boolean isProductNameExists(String name) {
         Query query = em.createNativeQuery("select count(*) from product_tb where name = ?");
         query.setParameter(1, name);
         return ((Number) query.getSingleResult()).intValue() > 0;
     }
 
-    @Transactional
     public void deleteById(Integer id){
         Query query = em.createNativeQuery("delete from product_tb where id=?", Product.class);
         query.setParameter(1, id);
@@ -29,31 +27,20 @@ public class ProductService {
         query.executeUpdate();
     }
 
-    @Transactional
-    public void updateById(ProductRequest.UpdateDTO reqDTO){
-        String name = reqDTO.getName();
-        Integer price = reqDTO.getPrice();
-        Integer qty = reqDTO.getQty();
-        Integer id = reqDTO.getId();
-
+    public void updateById(Integer id, ProductRequest.UpdateDTO reqDTO){
         Query query = em.createNativeQuery("update product_tb set name=?, price=?, qty=? where id=?", Product.class);
-        query.setParameter(1, name);
-        query.setParameter(2, price);
-        query.setParameter(3, qty);
+        query.setParameter(1, reqDTO.getName());
+        query.setParameter(2, reqDTO.getPrice());
+        query.setParameter(3, reqDTO.getQty());
         query.setParameter(4, id);
         query.executeUpdate();
     }
 
-    @Transactional
     public void save(ProductRequest.SaveDTO reqDTO){
-        String name = reqDTO.getName();
-        Integer price = reqDTO.getPrice();
-        Integer qty = reqDTO.getQty();
-
         Query query = em.createNativeQuery("insert into product_tb (name, price, qty, created_at) values (?,?,?, now())");
-        query.setParameter(1, name);
-        query.setParameter(2, price);
-        query.setParameter(3, qty);
+        query.setParameter(1, reqDTO.getName());
+        query.setParameter(2, reqDTO.getPrice());
+        query.setParameter(3, reqDTO.getQty());
         query.executeUpdate();
     }
 

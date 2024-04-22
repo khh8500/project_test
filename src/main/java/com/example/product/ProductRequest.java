@@ -1,4 +1,4 @@
-package com.example.store;
+package com.example.product;
 
 import lombok.Data;
 

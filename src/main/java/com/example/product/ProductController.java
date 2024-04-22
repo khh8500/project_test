@@ -1,4 +1,4 @@
-package com.example.store;
+package com.example.product;
 
 import com.example._core.utils.ApiUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,7 +53,7 @@ public class ProductController {
 
     @PostMapping("/product/{id}/update")
     public String update(@PathVariable Integer id, ProductRequest.UpdateDTO reqDTO) {
-        productService.updateById(reqDTO);
+        productService.updateById(id, reqDTO);
         return "redirect:/product/" + id;
     }
 
